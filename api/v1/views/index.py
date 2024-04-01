@@ -9,18 +9,6 @@ from models.place import Place
 from models.review import Review
 from models.state import State
 from models.user import User
-import models
-
-
-# Assuming these are all the classes you want to count
-classes = {
-    "amenities": "Amenity",
-    "cities": "City",
-    "places": "Place",
-    "reviews": "Review",
-    "states": "State",
-    "users": "User"
-}
 
 
 @app_views.route('/status', methods=['GET'], strict_slashes=False)
@@ -32,6 +20,17 @@ def status():
 @app_views.route('/stats', methods=['GET'], strict_slashes=False)
 def stats():
     """Retrieves the number of each object by type."""
-    counts = {cls: storage.count(eval("models." +
-                                      classes[cls])) for cls in classes}
+    # Dictionary mapping class names to their corresponding model classes
+    class_dict = {
+        "amenities": Amenity,
+        "cities": City,
+        "places": Place,
+        "reviews": Review,
+        "states": State,
+        "users": User
+    }
+
+    # Count the number of instances for each model class
+    counts = {cls_key: storage.count(cls_val) for cls_key,
+              cls_val in class_dict.items()}
     return jsonify(counts)

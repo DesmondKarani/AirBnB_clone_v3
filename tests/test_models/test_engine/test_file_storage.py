@@ -113,3 +113,38 @@ class TestFileStorage(unittest.TestCase):
         with open("file.json", "r") as f:
             js = f.read()
         self.assertEqual(json.loads(string), json.loads(js))
+
+    def test_get(self):
+        """ Tests the get method """
+        file_path = FileStorage._FileStorage__file_path
+        try:
+            os.remove(file_path)  # Reset the file
+        except FileNotFoundError:
+            pass
+
+        state1 = State(name="California")
+        self.storage.new(state1)
+        self.storage.save()
+
+        # Retrieve created object
+        retrieved_state = self.storage.get(State, state1.id)
+        self.assertEqual(state1.id, retrieved_state.id)
+
+        # Test retrieval with non-existent class and/or id
+        self.assertIsNone(self.storage.get(State, "fake_id"))
+        self.assertIsNone(self.storage.get("FakeClass", state1.id))
+
+    def test_count(self):
+        """ Tests the count method """
+        file_path = FileStorage._FileStorage__file_path
+        try:
+            os.remove(file_path)  # Start with an empty file
+        except FileNotFoundError:
+            pass
+
+        num_objects = self.storage.count()
+        self.storage.new(State())
+        self.storage.new(User())
+        self.assertEqual(num_objects + 2, self.storage.count())
+        self.assertEqual(1, self.storage.count(State))
+        # Counts only State objects

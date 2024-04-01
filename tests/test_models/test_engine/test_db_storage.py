@@ -86,3 +86,22 @@ class TestFileStorage(unittest.TestCase):
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_save(self):
         """Test that save properly saves objects to file.json"""
+
+    # new tests after fork
+    def test_get(self):
+        """ Tests the get method """
+        state1 = State(name="California")
+        self.storage.new(state1)
+        self.storage.save()
+        retrieved_state = self.storage.get(State, state1.id)
+        self.assertEqual(state1.id, retrieved_state.id)
+        # Test retrieval with non-existent class and id
+
+    def test_count(self):
+        """ Tests the count method """
+        num_objects = self.storage.count()
+        self.storage.new(State())
+        self.storage.new(User())
+        self.assertEqual(num_objects + 2, self.storage.count())
+        self.assertEqual(1, self.storage.count(State))
+        # Counts only State objects

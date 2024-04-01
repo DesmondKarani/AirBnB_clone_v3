@@ -1,11 +1,14 @@
 #!/usr/bin/python3
 """This module starts a Flask web application."""
 from flask import Flask, jsonify
+from flask_cors import CORS  # Import CORS
 from models import storage
 from api.v1.views import app_views
 from os import getenv
 
 app = Flask(__name__)
+# Setup CORS to allow all origins for all routes
+CORS(app, resources={r"/*": {"origins": "*"}})
 app.register_blueprint(app_views)
 
 
